@@ -417,9 +417,11 @@ The dashboard includes:
 
 ## Dashboard File
 
-```text
-reports/Financial_Data_Quality_Dashboard.xlsx
-```
+`reports/Financial_Data_Quality_Dashboard.xlsx`
+
+## Dashboard Preview
+
+![Financial Data Quality Dashboard](reports/screenshots/dashboard.png)
 
 The dashboard also includes the following sheets:
 
