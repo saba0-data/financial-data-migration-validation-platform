@@ -1,0 +1,29 @@
+table,row,rule_id,issue
+customers,0,C01,Missing customer ID
+customers,3,C02,Duplicate customer ID
+customers,4,C02,Duplicate customer ID
+customers,1,C03,Missing email
+customers,2,C04,Invalid email format
+customers,5,C05,Future created date
+accounts,0,A01,Missing customer ID
+accounts,4,A02,Duplicate account ID
+accounts,5,A02,Duplicate account ID
+accounts,7,A03,Invalid customer reference
+accounts,44,A03,Invalid customer reference
+accounts,104,A03,Invalid customer reference
+accounts,1,A04,Negative account balance
+accounts,2,A05,Invalid currency
+accounts,3,A06,Invalid account type
+accounts,6,A07,Future account opening date
+transactions,0,T01,Missing account ID
+transactions,5,T02,Duplicate transaction ID
+transactions,6,T02,Duplicate transaction ID
+transactions,88,T03,Invalid account reference
+transactions,103,T03,Invalid account reference
+transactions,322,T03,Invalid account reference
+transactions,1,T04,Transaction amount must be greater than zero
+transactions,2,T04,Transaction amount must be greater than zero
+transactions,3,T05,Invalid currency
+transactions,4,T06,Invalid transaction type
+transactions,7,T07,Future transaction date
+transactions,8,T08,Invalid transaction status

@@ -1,0 +1,12 @@
+validation_type,table,source_value,target_value,status
+Record Count,customers,94,94,PASS
+Record Count,accounts,136,136,PASS
+Record Count,transactions,448,448,PASS
+Column Check,customers,6,6,PASS
+Column Check,accounts,6,6,PASS
+Column Check,transactions,7,7,PASS
+Duplicate Check,customers,0,0,PASS
+Duplicate Check,accounts,0,0,PASS
+Duplicate Check,transactions,0,0,PASS
+Referential Integrity,accounts → customers,0,0,PASS
+Referential Integrity,transactions → accounts,0,0,PASS

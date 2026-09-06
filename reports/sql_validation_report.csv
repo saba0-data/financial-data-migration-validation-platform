@@ -1,0 +1,9 @@
+validation_name,issue_count,status
+customers_null_check,0,PASS
+accounts_null_check,0,PASS
+transactions_null_check,0,PASS
+duplicate_customers,0,PASS
+duplicate_accounts,0,PASS
+duplicate_transactions,0,PASS
+invalid_account_customer_reference,0,PASS
+invalid_transaction_account_reference,0,PASS

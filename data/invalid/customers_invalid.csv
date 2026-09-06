@@ -1,0 +1,7 @@
+customer_id,full_name,email,phone,city,created_date
+,Bhavika Nadig,wdara@example.org,8325727808,Bhusawal,2025-11-25
+CUST0002,Radha Din,,5060116799,Raiganj,2026-06-12
+CUST0003,Janani Reddy,invalid-email,6733073221,Rajkot,2024-12-06
+CUST0005,Varsha Rama,dhruvminhas@example.org,849002509,Kurnool,2026-08-24
+CUST0005,Dalaja Karnik,warjas59@example.org,1835357318,Guna,2024-07-06
+CUST0006,Falguni Bhat,mravel@example.com,4325005047,Bidhannagar,2026-10-06
