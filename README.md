@@ -1,179 +1,421 @@
 # Financial Data Migration & Validation Platform
 
-## Project Overview
+A comprehensive end-to-end financial data migration and validation platform built using Python, SQL, SQLite, Pandas, and Excel.
 
-The Financial Data Migration & Validation Platform is an end-to-end data quality and ETL project designed to simulate the migration of financial data from source systems to a target database.
-
-The project validates customer, account, and transaction data, identifies data quality issues, performs dependency-aware data cleansing, loads valid records into a SQLite database, and performs post-load reconciliation and SQL validation.
-
-It also includes Root Cause Analysis (RCA) and an automated Excel Data Quality Dashboard for reporting and monitoring.
+The project simulates a real-world financial data onboarding and migration workflow by generating financial data, injecting data quality issues, validating and cleansing records, processing data dependencies, loading valid records into a target database, performing post-load reconciliation, running SQL validation checks, conducting root cause analysis, and generating an automated Excel data quality dashboard.
 
 ---
 
-# Project Architecture
+## Project Overview
 
-```text
-Source Data
-    │
-    ▼
-Data Generation
-    │
-    ▼
-Data Issue Injection
-    │
-    ▼
-Data Quality Validation
-    │
-    ▼
-Dependency-Aware Data Processing
-    │
-    ├── Valid Data
-    │
-    └── Invalid Data
-           │
-           ▼
-    Root Cause Analysis
-    │
-    ▼
-ETL Data Loading
-    │
-    ▼
-SQLite Database
-    │
-    ▼
-Post-Load Validation
-    │
-    ▼
-SQL Validation
-    │
-    ▼
-Excel Data Quality Dashboard
-```
+Data migration projects require more than simply moving records from a source system to a target system. Data must be validated for accuracy, completeness, consistency, uniqueness, and referential integrity before and after migration.
+
+This project demonstrates a complete data validation workflow for three financial datasets:
+
+- Customers
+- Accounts
+- Transactions
+
+The platform identifies data quality issues, separates valid and invalid records, handles data dependencies between tables, loads validated data into a target SQLite database, and performs reconciliation and validation checks.
 
 ---
 
 # Key Features
 
-- End-to-end financial data migration workflow
 - Automated financial data generation
 - Intentional data quality issue injection
-- Rule-based data validation
-- Data cleansing and segregation
+- Data quality validation
+- Data cleansing and invalid record segregation
 - Dependency-aware data processing
-- ETL data loading into SQLite
+- ETL data loading
+- SQLite target database
 - Post-load validation and reconciliation
 - SQL-based data validation
 - Referential integrity checks
 - Duplicate detection
 - Root Cause Analysis (RCA)
-- Automated Excel Data Quality Dashboard
-- CSV-based validation and reporting
-- Python automation
+- Issue prioritization
+- Automated Excel data quality dashboard
+- CSV validation reports
+- Modular Python validation architecture
+
+---
+
+# Project Workflow
+
+```text
+Raw Financial Data
+       │
+       ▼
+Data Generation
+       │
+       ▼
+Data Quality Issue Injection
+       │
+       ▼
+Data Quality Validation
+       │
+       ▼
+Data Cleansing & Processing
+       │
+       ▼
+Dependency-Aware Validation
+       │
+       ▼
+Valid / Invalid Record Separation
+       │
+       ▼
+ETL Data Loading
+       │
+       ▼
+SQLite Target Database
+       │
+       ▼
+Post-Load Validation
+       │
+       ▼
+SQL Validation & Reconciliation
+       │
+       ▼
+Root Cause Analysis
+       │
+       ▼
+Excel Data Quality Dashboard
+```
+
+---
+
+# Data Model
+
+The project works with three related financial datasets.
+
+## Customers
+
+| Column | Description |
+|---|---|
+| customer_id | Unique customer identifier |
+| full_name | Customer name |
+| email | Customer email address |
+| phone | Customer phone number |
+| city | Customer city |
+| created_date | Customer creation date |
+
+---
+
+## Accounts
+
+| Column | Description |
+|---|---|
+| account_id | Unique account identifier |
+| customer_id | Customer identifier |
+| account_type | Type of account |
+| balance | Account balance |
+| currency | Account currency |
+| account_open_date | Account opening date |
+
+Relationship:
+
+```text
+Customer
+   │
+   │ customer_id
+   ▼
+Account
+```
+
+Each account must reference a valid customer.
+
+---
+
+## Transactions
+
+| Column | Description |
+|---|---|
+| transaction_id | Unique transaction identifier |
+| account_id | Account identifier |
+| transaction_date | Transaction date |
+| transaction_type | Type of transaction |
+| amount | Transaction amount |
+| currency | Transaction currency |
+| status | Transaction status |
+
+Relationship:
+
+```text
+Customer
+   │
+   ▼
+Account
+   │
+   ▼
+Transaction
+```
+
+Each transaction must reference a valid account.
 
 ---
 
 # Data Generation
 
-The project generates realistic sample financial datasets for three core entities:
+Synthetic financial data is generated using Python and Faker.
 
-- Customers
-- Bank Accounts
-- Financial Transactions
+The project generates:
 
-## Records Generated
+- 100 Customers
+- 150 Accounts
+- 500 Transactions
 
-| Dataset | Records |
-|---|---:|
-| Customers | 100 |
-| Accounts | 150 |
-| Transactions | 500 |
-| **Total** | **750** |
+The generated datasets are stored in:
 
-The generated data acts as the source system for the financial data migration pipeline.
+```text
+data/raw/
+```
+
+Files generated:
+
+```text
+customers.csv
+accounts.csv
+transactions.csv
+```
+
+Run the data generation process:
+
+```bash
+python src/generate_data.py
+```
+
+Example output:
+
+```text
+Financial data generated successfully!
+
+Customers: 100
+Accounts: 150
+Transactions: 500
+```
 
 ---
 
 # Data Quality Issue Injection
 
-The project intentionally injects data quality issues into the generated datasets to simulate real-world data migration problems.
+To simulate real-world data migration challenges, intentional data quality issues are injected into the datasets.
 
-## Issues Introduced
+The project introduces different types of issues such as:
 
-### Customer Data Issues
-
-- Missing customer information
-- Invalid email values
+- Missing values
 - Duplicate records
-- Data completeness issues
-- Invalid customer data
-
-### Account Data Issues
-
-- Missing account information
-- Invalid customer references
-- Invalid account balances
-- Invalid account attributes
-- Data consistency issues
-
-### Transaction Data Issues
-
-- Missing transaction information
+- Invalid email values
+- Invalid phone values
 - Invalid account references
+- Invalid customer references
+- Invalid transaction values
+- Invalid dates
+- Negative or invalid balances
 - Invalid transaction amounts
-- Invalid transaction types
-- Invalid transaction status
-- Currency-related issues
+- Referential integrity violations
 
-This approach allows the validation pipeline to simulate realistic data quality problems before migration.
+Run:
+
+```bash
+python src/inject_data_issues.py
+```
+
+Example output:
+
+```text
+Data quality issues injected successfully!
+
+Issues introduced:
+Customers: 5 issues
+Accounts: 6 issues
+Transactions: 8 issues
+```
+
+The processed datasets containing injected issues are stored in:
+
+```text
+data/processed/
+```
+
+Files:
+
+```text
+customers_with_issues.csv
+accounts_with_issues.csv
+transactions_with_issues.csv
+```
 
 ---
 
 # Data Quality Validation
 
-The project uses predefined validation rules to identify data quality issues across customer, account, and transaction datasets.
+The validation engine checks the datasets against defined data quality rules.
+
+The validation process evaluates:
+
+- Completeness
+- Accuracy
+- Consistency
+- Uniqueness
+- Validity
+- Referential Integrity
+
+The validation rules are organized by dataset.
+
+---
 
 ## Customer Validation
 
-The validation process checks:
+Customer validation checks include:
 
-- Customer ID validation
-- Missing value detection
-- Email validation
-- Duplicate detection
-- Data completeness validation
+- Missing customer ID
+- Missing full name
+- Missing email
+- Invalid email format
+- Missing phone
+- Duplicate customer records
+
+Example validation rules:
+
+```text
+C01
+C02
+C03
+C04
+C05
+```
+
+---
 
 ## Account Validation
 
-The validation process checks:
+Account validation checks include:
 
-- Account ID validation
-- Customer reference validation
-- Account balance validation
-- Account type validation
-- Currency validation
-- Data consistency validation
+- Missing account ID
+- Missing customer ID
+- Invalid customer reference
+- Missing account type
+- Invalid balance
+- Invalid currency
+- Duplicate account records
+
+Example validation rules:
+
+```text
+A01
+A02
+A03
+A04
+A05
+A06
+A07
+```
+
+---
 
 ## Transaction Validation
 
-The validation process checks:
+Transaction validation checks include:
 
-- Transaction ID validation
-- Account reference validation
-- Transaction amount validation
-- Transaction type validation
-- Transaction status validation
-- Currency validation
-- Data consistency validation
+- Missing transaction ID
+- Missing account ID
+- Invalid account reference
+- Invalid transaction date
+- Invalid transaction type
+- Invalid transaction amount
+- Invalid currency
+- Invalid transaction status
+- Duplicate transaction records
 
-All detected issues are documented in the data quality report.
+Example validation rules:
+
+```text
+T01
+T02
+T03
+T04
+T05
+T06
+T07
+T08
+```
+
+---
+
+# Validation Engine
+
+The validation engine coordinates validation across all datasets.
+
+Main file:
+
+```text
+src/validation_engine.py
+```
+
+Validators:
+
+```text
+src/validators/
+├── __init__.py
+├── customer_validator.py
+├── account_validator.py
+└── transaction_validator.py
+```
+
+The validation process generates a consolidated data quality report.
+
+Run:
+
+```bash
+python src/validation_engine.py
+```
+
+The report is generated at:
+
+```text
+reports/data_quality_report.csv
+```
+
+---
+
+# Data Processing
+
+After validation, records are processed and separated into valid and invalid datasets.
+
+The data processing workflow:
+
+```text
+Source Data
+    │
+    ▼
+Validation
+    │
+    ├──────────────► Invalid Records
+    │
+    ▼
+Valid Records
+    │
+    ▼
+Dependency Validation
+    │
+    ▼
+Cleaned Data
+```
+
+Run:
+
+```bash
+python src/data_processor.py
+```
 
 ---
 
 # Dependency-Aware Data Processing
 
-The project processes financial data based on relationships between datasets.
+One of the key features of this project is dependency-aware data processing.
 
-The dependency structure is:
+The datasets have parent-child relationships:
 
 ```text
 Customers
@@ -185,297 +427,753 @@ Accounts
 Transactions
 ```
 
-## Dependency Logic
-
-A transaction depends on a valid account.
-
-An account depends on a valid customer.
-
-Therefore, invalid parent records can affect related child records.
-
-For example:
+If a customer record is invalid:
 
 ```text
 Invalid Customer
-      │
-      ▼
-Related Account Cannot Be Migrated
-      │
-      ▼
-Related Transactions Cannot Be Migrated
+       │
+       ▼
+Related Account becomes invalid
+       │
+       ▼
+Related Transaction becomes invalid
 ```
 
-This dependency-aware processing helps maintain referential integrity during data migration.
+This prevents invalid parent records from causing referential integrity failures during migration.
 
-The pipeline separates records into:
+The processing order is:
 
-- Valid / Cleaned Data
-- Invalid Data
+```text
+1. Validate Customers
+2. Process valid Customers
+3. Validate Accounts
+4. Check Account → Customer dependency
+5. Process valid Accounts
+6. Validate Transactions
+7. Check Transaction → Account dependency
+8. Process valid Transactions
+```
 
 ---
 
 # Data Processing Results
 
-The dependency-aware data processing pipeline produced the following results.
+The project produces the following processed results.
 
-| Metric | Result |
-|---|---:|
-| Total Source Records | 750 |
-| Valid Records | 678 |
-| Invalid Records | 72 |
-| Migration Success Rate | 90.40% |
+## Customers
 
-## Valid Records
+```text
+Valid Customers: 94
+Invalid Customers: 6
+```
 
-| Dataset | Valid Records |
-|---|---:|
-| Customers | 94 |
-| Accounts | 136 |
-| Transactions | 448 |
-| **Total** | **678** |
+## Accounts
 
-## Invalid Records
+```text
+Valid Accounts: 136
+Invalid Accounts: 14
+```
 
-| Dataset | Invalid Records |
-|---|---:|
-| Customers | 6 |
-| Accounts | 14 |
-| Transactions | 52 |
-| **Total** | **72** |
+## Transactions
+
+```text
+Valid Transactions: 448
+Invalid Transactions: 52
+```
+
+Total records:
+
+```text
+Total Source Records: 750
+```
+
+Valid records:
+
+```text
+678
+```
+
+Invalid records:
+
+```text
+72
+```
+
+Migration success rate:
+
+```text
+90.40%
+```
+
+---
+
+# Cleaned Data
+
+Validated records are stored in:
+
+```text
+data/cleaned/
+```
+
+Files:
+
+```text
+customers_cleaned.csv
+accounts_cleaned.csv
+transactions_cleaned.csv
+```
+
+Invalid records are stored separately in:
+
+```text
+data/invalid/
+```
+
+Files:
+
+```text
+customers_invalid.csv
+accounts_invalid.csv
+transactions_invalid.csv
+```
+
+This approach allows invalid records to be investigated without preventing valid records from being migrated.
 
 ---
 
 # ETL Data Loading
 
-The project follows an ETL workflow to migrate validated financial data into a target database.
+The ETL loading process loads validated financial records into a SQLite target database.
 
-## ETL Workflow
-
-```text
-EXTRACT
-   │
-   ▼
-Raw Source CSV Files
-   │
-   ▼
-TRANSFORM
-   │
-   ├── Data Validation
-   ├── Data Cleansing
-   ├── Dependency Validation
-   └── Invalid Record Segregation
-   │
-   ▼
-LOAD
-   │
-   ▼
-SQLite Target Database
-```
-
-Only validated records are loaded into the target database.
-
-## Target Database
+ETL workflow:
 
 ```text
-data/database/financial_data.db
+Extract
+   │
+   ▼
+Cleaned CSV Files
+   │
+   ▼
+Transform
+   │
+   ▼
+Data Validation
+Dependency Validation
+Data Preparation
+   │
+   ▼
+Load
+   │
+   ▼
+SQLite Database
 ```
 
-## Target Tables
+Run:
 
-The SQLite database contains:
+```bash
+python src/etl_loader.py
+```
 
-- customers
-- accounts
-- transactions
+Example output:
 
-The project uses SQLAlchemy for database interaction and SQLite for the target database.
+```text
+Data loaded successfully!
+
+Customers loaded: 94
+Accounts loaded: 136
+Transactions loaded: 448
+```
+
+---
+
+# Target Database
+
+The target database is:
+
+```text
+database/financial_data.db
+```
+
+Database technology:
+
+```text
+SQLite
+```
+
+Tables:
+
+```text
+customers
+accounts
+transactions
+```
+
+Relationship:
+
+```text
+customers
+    │
+    │ customer_id
+    ▼
+accounts
+    │
+    │ account_id
+    ▼
+transactions
+```
 
 ---
 
 # Post-Load Validation & Reconciliation
 
-After loading the cleaned data into the target database, the project performs post-load validation and reconciliation.
+After loading data into the target database, post-load validation checks confirm that the migration was successful.
 
-## Validation Checks
-
-The following checks are performed:
+The following validations are performed:
 
 - Record count validation
-- Column count validation
-- Duplicate record validation
-- Customer-to-account referential integrity validation
-- Account-to-transaction referential integrity validation
+- Column validation
+- Duplicate checks
+- Referential integrity validation
+- Source-to-target reconciliation
+
+Run:
+
+```bash
+python src/post_load_validation.py
+```
+
+---
 
 ## Post-Load Validation Results
 
-| Metric | Result |
-|---|---:|
-| Total Checks | 11 |
-| Passed | 11 |
-| Failed | 0 |
-| Success Rate | 100% |
+Example results:
 
-The final validation confirmed that all migrated records were successfully loaded and that referential integrity was maintained.
+```text
+Total Checks: 11
+Passed: 11
+Failed: 0
+```
+
+Validation results:
+
+```text
+Record Count - Customers                 PASS
+Record Count - Accounts                  PASS
+Record Count - Transactions              PASS
+
+Column Check - Customers                 PASS
+Column Check - Accounts                  PASS
+Column Check - Transactions              PASS
+
+Duplicate Check - Customers              PASS
+Duplicate Check - Accounts               PASS
+Duplicate Check - Transactions           PASS
+
+Referential Integrity - Accounts         PASS
+Referential Integrity - Transactions     PASS
+```
+
+Report:
+
+```text
+reports/post_load_validation_report.csv
+```
 
 ---
 
 # SQL Data Validation
 
-The project performs additional validation using SQL queries against the SQLite target database.
+SQL validation checks are performed directly against the target SQLite database.
 
-## SQL Validation Checks
+Run:
+
+```bash
+python src/sql_validation.py
+```
 
 The SQL validation process checks:
 
-1. Customer null values
-2. Account null values
-3. Transaction null values
-4. Duplicate customers
-5. Duplicate accounts
-6. Duplicate transactions
-7. Invalid account-to-customer references
-8. Invalid transaction-to-account references
+- Null values
+- Duplicate records
+- Customer integrity
+- Account integrity
+- Transaction integrity
+- Account to Customer relationships
+- Transaction to Account relationships
 
-## SQL Validation Results
+---
 
-| Metric | Result |
-|---|---:|
-| Total SQL Checks | 8 |
-| Passed | 8 |
-| Failed | 0 |
-| Success Rate | 100% |
+# SQL Validation Results
 
-SQL validation provides an additional layer of verification after the ETL loading process.
+Example output:
+
+```text
+SQL DATA VALIDATION SUMMARY
+```
+
+```text
+customers_null_check                     PASS
+accounts_null_check                      PASS
+transactions_null_check                  PASS
+
+duplicate_customers                      PASS
+duplicate_accounts                       PASS
+duplicate_transactions                   PASS
+
+invalid_account_customer_reference       PASS
+invalid_transaction_account_reference    PASS
+```
+
+Summary:
+
+```text
+Total Checks: 8
+Passed: 8
+Failed: 0
+```
+
+Report:
+
+```text
+reports/sql_validation_report.csv
+```
+
+---
+
+# SQL Scripts
+
+The project includes reusable SQL scripts.
+
+Location:
+
+```text
+sql/
+```
+
+Files:
+
+```text
+01_data_extraction.sql
+02_data_quality_checks.sql
+03_referential_integrity_checks.sql
+04_reconciliation_queries.sql
+```
+
+---
+
+## Data Extraction
+
+File:
+
+```text
+sql/01_data_extraction.sql
+```
+
+Used for:
+
+- Customer extraction
+- Account extraction
+- Transaction extraction
+- Data analysis
+
+---
+
+## Data Quality Checks
+
+File:
+
+```text
+sql/02_data_quality_checks.sql
+```
+
+Used for:
+
+- Null checks
+- Duplicate checks
+- Invalid value checks
+- Data quality analysis
+
+---
+
+## Referential Integrity Checks
+
+File:
+
+```text
+sql/03_referential_integrity_checks.sql
+```
+
+Used for validating:
+
+```text
+Accounts → Customers
+Transactions → Accounts
+```
+
+---
+
+## Reconciliation Queries
+
+File:
+
+```text
+sql/04_reconciliation_queries.sql
+```
+
+Used for:
+
+- Source record counts
+- Target record counts
+- Migration reconciliation
+- Data comparison
 
 ---
 
 # Root Cause Analysis
 
-The project includes a Root Cause Analysis (RCA) process for all identified data quality issues.
+Data quality issues are analyzed to identify their potential root causes and remediation strategies.
 
-## RCA Includes
+Run:
 
-- Issue identification
-- Issue categorization
-- Priority classification
-- Root cause identification
-- Impact assessment
-- Recommended remediation actions
+```bash
+python src/root_cause_analysis.py
+```
 
-## Priority Classification
+The RCA process categorizes issues based on:
 
-Issues are categorized based on their severity:
+- Issue type
+- Dataset
+- Validation rule
+- Priority
+- Root cause
+- Recommended remediation
 
-- High
-- Medium
-- Low
+---
 
 ## Root Cause Analysis Results
 
-| Priority | Issues |
-|---|---:|
-| High | 21 |
-| Medium | 7 |
-| Low | 0 |
-| **Total** | **28** |
+Example output:
 
-The RCA report helps identify the underlying causes of data quality issues and supports future data quality improvements.
+```text
+Total Issues Analyzed: 28
+```
+
+Issues by priority:
+
+```text
+High Priority: 21
+Medium Priority: 7
+```
+
+Issues by table:
+
+```text
+Transactions: 12
+Accounts: 10
+Customers: 6
+```
+
+Report:
+
+```text
+reports/root_cause_analysis_report.csv
+```
+
+---
+
+# Issue Prioritization
+
+Issues are prioritized to help teams focus on the most critical data problems.
+
+## High Priority
+
+Examples:
+
+- Referential integrity failures
+- Missing primary identifiers
+- Invalid account references
+- Invalid transaction references
+- Critical financial data issues
+
+## Medium Priority
+
+Examples:
+
+- Missing descriptive fields
+- Invalid formats
+- Data consistency issues
+
+Priority-based analysis helps support:
+
+- Faster issue resolution
+- Better data governance
+- Efficient remediation
+- Improved migration quality
 
 ---
 
 # Excel Data Quality Dashboard
 
-The project automatically generates an Excel dashboard containing data migration and validation metrics.
+The project automatically generates an Excel dashboard containing migration and validation metrics.
 
-## Dashboard Metrics
+Run:
 
-The dashboard includes:
+```bash
+python src/excel_dashboard.py
+```
+
+Dashboard file:
+
+```text
+reports/Financial_Data_Quality_Dashboard.xlsx
+```
+
+---
+
+## Dashboard Features
+
+The Excel dashboard includes:
+
+### Migration Metrics
 
 - Total Source Records
 - Valid Records
 - Invalid Records
 - Migration Success Rate
-- Total Data Quality Issues
-- Data Quality Issue Rate
+
+### Data Quality Metrics
+
+- Total Issues
 - High Priority Issues
 - Medium Priority Issues
 - Low Priority Issues
+
+### Validation Metrics
+
 - Post-Load Validation Results
-- Post-Load Success Rate
 - SQL Validation Results
-- SQL Validation Success Rate
-- Source vs Valid Record Comparison
-- Issues by Table
-- Issue Priority Distribution
+- Validation Success Rates
 
-## Dashboard Charts
+### Detailed Reports
 
-The dashboard includes:
+The workbook includes:
 
-- Source vs Valid Records Bar Chart
-- Issue Priority Distribution Chart
-
-## Dashboard File
-
-`reports/Financial_Data_Quality_Dashboard.xlsx`
-
-## Dashboard Preview
-
-![Financial Data Quality Dashboard](reports/screenshots/dashboard.png)
-
-The dashboard also includes the following sheets:
-
+```text
 1. Dashboard
 2. Data Quality Issues
 3. Root Cause Analysis
 4. Post Load Validation
 5. SQL Validation
+```
+
+---
+
+# Dashboard Preview
+
+![Financial Data Quality Dashboard](reports/screenshots/dashboard.png)
+
+---
+
+# Dashboard Metrics
+
+Example project metrics:
+
+## Source Records
+
+```text
+Customers: 100
+Accounts: 150
+Transactions: 500
+```
+
+Total:
+
+```text
+750 Records
+```
+
+---
+
+## Valid Records
+
+```text
+Customers: 94
+Accounts: 136
+Transactions: 448
+```
+
+Total:
+
+```text
+678 Records
+```
+
+---
+
+## Invalid Records
+
+```text
+72 Records
+```
+
+---
+
+## Migration Success Rate
+
+```text
+90.40%
+```
+
+---
+
+## Data Quality Issues
+
+```text
+Total Issues: 28
+
+High Priority: 21
+Medium Priority: 7
+Low Priority: 0
+```
+
+---
+
+## Validation Success
+
+Post-load validation:
+
+```text
+11 / 11 Passed
+```
+
+SQL validation:
+
+```text
+8 / 8 Passed
+```
+
+---
+
+# Validation Reports
+
+The project generates multiple reports.
+
+## Data Quality Report
+
+```text
+reports/data_quality_report.csv
+```
+
+Contains:
+
+- Validation rule
+- Table
+- Issue details
+- Invalid values
+- Data quality findings
+
+---
+
+## Root Cause Analysis Report
+
+```text
+reports/root_cause_analysis_report.csv
+```
+
+Contains:
+
+- Issue
+- Priority
+- Root cause
+- Impact
+- Recommended remediation
+
+---
+
+## Post-Load Validation Report
+
+```text
+reports/post_load_validation_report.csv
+```
+
+Contains:
+
+- Validation type
+- Table
+- Source value
+- Target value
+- Validation status
+
+---
+
+## SQL Validation Report
+
+```text
+reports/sql_validation_report.csv
+```
+
+Contains:
+
+- Validation name
+- Issue count
+- Validation status
 
 ---
 
 # Project Structure
 
 ```text
-financial-data-migration-validation-platform
+financial-data-migration-validation-platform/
 │
-├── data
+├── data/
 │   │
-│   ├── raw
+│   ├── raw/
 │   │   ├── customers.csv
 │   │   ├── accounts.csv
 │   │   └── transactions.csv
 │   │
-│   ├── processed
+│   ├── processed/
 │   │   ├── customers_with_issues.csv
 │   │   ├── accounts_with_issues.csv
 │   │   └── transactions_with_issues.csv
 │   │
-│   ├── cleaned
+│   ├── cleaned/
 │   │   ├── customers_cleaned.csv
 │   │   ├── accounts_cleaned.csv
 │   │   └── transactions_cleaned.csv
 │   │
-│   ├── invalid
-│   │   ├── customers_invalid.csv
-│   │   ├── accounts_invalid.csv
-│   │   └── transactions_invalid.csv
-│   │
-│   └── database
-│       └── financial_data.db
+│   └── invalid/
+│       ├── customers_invalid.csv
+│       ├── accounts_invalid.csv
+│       └── transactions_invalid.csv
 │
-├── reports
-│   ├── screenshots
+├── database/
+│   └── financial_data.db
+│
+├── reports/
+│   │
+│   ├── screenshots/
+│   │   └── dashboard.png
+│   │
+│   ├── Financial_Data_Quality_Dashboard.xlsx
 │   ├── data_quality_report.csv
-│   ├── root_cause_analysis_report.csv
 │   ├── post_load_validation_report.csv
-│   ├── sql_validation_report.csv
-│   └── Financial_Data_Quality_Dashboard.xlsx
+│   ├── root_cause_analysis_report.csv
+│   └── sql_validation_report.csv
 │
-├── sql
+├── sql/
+│   ├── 01_data_extraction.sql
+│   ├── 02_data_quality_checks.sql
+│   ├── 03_referential_integrity_checks.sql
+│   └── 04_reconciliation_queries.sql
 │
-├── src
+├── src/
 │   │
-│   ├── validators
+│   ├── validators/
+│   │   ├── __init__.py
+│   │   ├── customer_validator.py
+│   │   ├── account_validator.py
+│   │   └── transaction_validator.py
 │   │
 │   ├── generate_data.py
 │   ├── inject_data_issues.py
@@ -483,28 +1181,22 @@ financial-data-migration-validation-platform
 │   ├── data_processor.py
 │   ├── etl_loader.py
 │   ├── post_load_validation.py
-│   ├── root_cause_analysis.py
 │   ├── sql_validation.py
+│   ├── root_cause_analysis.py
 │   └── excel_dashboard.py
 │
-├── tests
-│
-├── config
-│
-├── docs
-│
 ├── .gitignore
-├── requirements.txt
-└── README.md
+├── README.md
+└── requirements.txt
 ```
 
 ---
 
 # Technologies Used
 
-## Programming Language
+## Programming
 
-- Python 3
+- Python
 
 ## Data Processing
 
@@ -518,28 +1210,30 @@ financial-data-migration-validation-platform
 
 ## Data Validation
 
-- Python Validation Rules
-- SQL Validation
+- Custom Python Validation Rules
+- SQL Validation Queries
 - Referential Integrity Checks
-- Duplicate Detection
-- Null Value Validation
+
+## ETL
+
+- Python
+- Pandas
+- SQLAlchemy
+
+## Reporting
+
+- Excel
+- OpenPyXL
+- CSV Reports
 
 ## Data Generation
 
 - Faker
 
-## Reporting
+## Environment
 
-- Microsoft Excel
-- OpenPyXL
-- CSV Reports
-
-## Development Tools
-
-- Visual Studio Code
-- Git
-- GitHub
 - Python Virtual Environment
+- python-dotenv
 
 ---
 
@@ -551,27 +1245,37 @@ financial-data-migration-validation-platform
 git clone https://github.com/saba0-data/financial-data-migration-validation-platform.git
 ```
 
+---
+
 ## 2. Navigate to the Project Directory
 
 ```bash
 cd financial-data-migration-validation-platform
 ```
 
+---
+
 ## 3. Create a Virtual Environment
+
+Windows:
 
 ```bash
 python -m venv venv
 ```
 
+---
+
 ## 4. Activate the Virtual Environment
 
-### Windows
+Windows:
 
 ```bash
 venv\Scripts\activate
 ```
 
-## 5. Install Required Dependencies
+---
+
+## 5. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -581,19 +1285,13 @@ pip install -r requirements.txt
 
 # Running the Project
 
-Run the project scripts in the following order.
+Run the project pipeline in the following order.
 
 ## Step 1: Generate Financial Data
 
 ```bash
 python src/generate_data.py
 ```
-
-This generates:
-
-- 100 customer records
-- 150 account records
-- 500 transaction records
 
 ---
 
@@ -603,8 +1301,6 @@ This generates:
 python src/inject_data_issues.py
 ```
 
-This intentionally introduces data quality problems into the datasets.
-
 ---
 
 ## Step 3: Run Data Quality Validation
@@ -613,63 +1309,37 @@ This intentionally introduces data quality problems into the datasets.
 python src/validation_engine.py
 ```
 
-This identifies data quality issues and generates:
-
-```text
-reports/data_quality_report.csv
-```
-
 ---
 
-## Step 4: Process Valid and Invalid Data
+## Step 4: Process and Clean Data
 
 ```bash
 python src/data_processor.py
 ```
 
-This performs dependency-aware processing and separates data into:
-
-- Cleaned Data
-- Invalid Data
-
 ---
 
-## Step 5: Load Valid Data into SQLite
+## Step 5: Load Data into SQLite
 
 ```bash
 python src/etl_loader.py
 ```
 
-This loads cleaned financial data into:
-
-```text
-data/database/financial_data.db
-```
-
 ---
 
-## Step 6: Perform Post-Load Validation
+## Step 6: Run Post-Load Validation
 
 ```bash
 python src/post_load_validation.py
 ```
 
-This validates:
-
-- Record counts
-- Column counts
-- Duplicate records
-- Referential integrity
-
 ---
 
-## Step 7: Perform Root Cause Analysis
+## Step 7: Run Root Cause Analysis
 
 ```bash
 python src/root_cause_analysis.py
 ```
-
-This analyzes data quality issues and generates remediation information.
 
 ---
 
@@ -679,8 +1349,6 @@ This analyzes data quality issues and generates remediation information.
 python src/sql_validation.py
 ```
 
-This performs SQL-based validation against the target database.
-
 ---
 
 ## Step 9: Generate Excel Dashboard
@@ -689,91 +1357,121 @@ This performs SQL-based validation against the target database.
 python src/excel_dashboard.py
 ```
 
-This generates:
+---
+
+# Complete Pipeline
+
+The complete workflow is:
 
 ```text
-reports/Financial_Data_Quality_Dashboard.xlsx
+Generate Data
+     │
+     ▼
+Inject Data Issues
+     │
+     ▼
+Validate Data
+     │
+     ▼
+Process Valid / Invalid Records
+     │
+     ▼
+Validate Data Dependencies
+     │
+     ▼
+Load Valid Data
+     │
+     ▼
+SQLite Database
+     │
+     ▼
+Post-Load Validation
+     │
+     ▼
+SQL Validation
+     │
+     ▼
+Root Cause Analysis
+     │
+     ▼
+Excel Dashboard
 ```
 
 ---
 
-# Validation Reports
+# Key Data Quality Dimensions
 
-The project automatically generates multiple validation and reporting files.
+The project demonstrates the following data quality dimensions.
 
-## Data Quality Report
+## Completeness
+
+Checks whether required fields contain values.
+
+Example:
 
 ```text
-reports/data_quality_report.csv
+Missing customer ID
+Missing email
+Missing account ID
+Missing transaction ID
 ```
-
-Contains:
-
-- Data quality issues
-- Validation rules
-- Affected records
-- Issue categories
 
 ---
 
-## Root Cause Analysis Report
+## Validity
+
+Checks whether values follow expected formats and business rules.
+
+Example:
 
 ```text
-reports/root_cause_analysis_report.csv
+Invalid email
+Invalid balance
+Invalid transaction amount
+Invalid date
 ```
-
-Contains:
-
-- Issue information
-- Priority
-- Root cause
-- Recommended remediation
 
 ---
 
-## Post-Load Validation Report
+## Uniqueness
+
+Checks for duplicate records.
+
+Example:
 
 ```text
-reports/post_load_validation_report.csv
+Duplicate customer
+Duplicate account
+Duplicate transaction
 ```
-
-Contains:
-
-- Record count validation
-- Column validation
-- Duplicate checks
-- Referential integrity checks
-- Validation status
 
 ---
 
-## SQL Validation Report
+## Consistency
+
+Checks whether data values follow defined standards.
+
+Example:
 
 ```text
-reports/sql_validation_report.csv
+Invalid currency
+Invalid transaction status
+Invalid account type
 ```
-
-Contains:
-
-- SQL validation name
-- Issue count
-- Validation status
 
 ---
 
-## Excel Data Quality Dashboard
+## Referential Integrity
+
+Checks relationships between datasets.
+
+Example:
 
 ```text
-reports/Financial_Data_Quality_Dashboard.xlsx
+Account → Customer
+
+Transaction → Account
 ```
-
-Contains:
-
-- Executive dashboard
-- Data Quality Issues
-- Root Cause Analysis
-- Post Load Validation
-- SQL Validation
 
 ---
 
@@ -781,74 +1479,63 @@ Contains:
 
 This project demonstrates practical experience with:
 
-- Financial Data Management
-- Data Migration
-- Data Quality Management
-- Data Validation
-- Data Cleansing
-- ETL Processes
-- Data Integration
-- SQL Validation
-- Database Loading
-- Data Reconciliation
-- Post-Load Validation
-- Referential Integrity
-- Dependency-Aware Data Processing
+- Data quality validation
+- Data migration workflows
+- ETL processing
+- SQL queries
+- SQL data validation
+- Data cleansing
+- Data transformation
+- Dependency-aware processing
+- Referential integrity
+- Duplicate detection
+- Post-load validation
+- Data reconciliation
 - Root Cause Analysis
-- Data Defect Investigation
-- CSV Processing
-- SQLite
-- SQLAlchemy
+- SQLite databases
+- Python automation
 - Pandas
-- Excel Dashboard Automation
-- Python Automation
+- SQLAlchemy
+- Excel reporting
+- Data quality reporting
+- Debugging data issues
 
 ---
 
 # Business Value
 
-The platform simulates a real-world financial data migration process and provides several business benefits.
+This platform demonstrates how organizations can improve the reliability of data migration projects.
 
-## Improved Data Quality
+The solution helps teams:
 
-Identifies data quality issues before records are migrated to the target system.
+- Identify data quality issues before migration
+- Prevent invalid data from entering target systems
+- Maintain referential integrity
+- Separate valid and invalid records
+- Validate source-to-target migration
+- Detect duplicate records
+- Perform post-load reconciliation
+- Investigate root causes
+- Prioritize critical data issues
+- Improve data quality visibility
+- Automate validation reporting
 
-## Reduced Migration Risk
+---
 
-Prevents invalid and inconsistent records from entering the target database.
+# Use Cases
 
-## Referential Integrity
+This project can be adapted for:
 
-Maintains valid relationships between:
-
-```text
-Customers
-    ↓
-Accounts
-    ↓
-Transactions
-```
-
-## Automated Validation
-
-Reduces manual validation effort through automated Python and SQL checks.
-
-## Better Issue Investigation
-
-Root Cause Analysis helps identify the underlying causes of data defects.
-
-## Improved Reporting
-
-The automated Excel dashboard provides a clear summary of:
-
-- Data quality
-- Migration success
-- Validation results
-- Issue priorities
-
-## Reusable Data Pipeline
-
-The project structure can be extended to support larger datasets and additional data sources.
+- Financial data migration
+- Banking data validation
+- Customer data onboarding
+- Master data management
+- Data quality monitoring
+- ETL validation
+- Database migration
+- Enterprise data onboarding
+- Data reconciliation
+- Data governance workflows
 
 ---
 
@@ -856,91 +1543,42 @@ The project structure can be extended to support larger datasets and additional 
 
 Potential future enhancements include:
 
-## Cloud Integration
-
-- Azure Data Factory
-- Azure SQL Database
-- Azure Blob Storage
-
-## Enterprise ETL Integration
-
-- SAP BusinessObjects Data Services (SAP BODS)
-- Additional ETL workflows
-
-## Dashboard Improvements
-
-- Streamlit Web Dashboard
-- Power BI Dashboard
-- Interactive Data Quality Monitoring
-
-## Automation
-
-- Scheduled pipeline execution
+- Azure Data Factory integration
+- SAP BODS integration
 - Automated data quality alerts
-- Email notifications
-
-## Testing
-
-- Unit testing
-- Integration testing
-- Automated validation tests
-
-## Data Quality Enhancements
-
+- REST API for validation services
+- Streamlit dashboard
+- Power BI dashboard
+- Automated scheduling
 - Data quality scoring
-- Data profiling
-- Advanced anomaly detection
-- Automated remediation
-
-## Database Improvements
-
-- PostgreSQL
-- SQL Server
+- Configurable validation rules
+- Metadata-driven validation
 - Cloud database integration
-
-## CI/CD
-
-- GitHub Actions
-- Automated testing pipelines
-- Automated deployment
+- Unit testing
+- Logging framework
+- CI/CD pipeline
+- Data lineage tracking
+- Email notifications
+- Automated remediation workflows
 
 ---
 
-# Skills Demonstrated
+# Why This Project Is Relevant
 
-This project demonstrates skills relevant to Data Management, Data Validation, ETL, and Data Quality roles.
+This project demonstrates skills commonly required for data validation and global data management roles:
 
-### Technical Skills
-
-- Python
-- SQL
-- Pandas
-- SQLAlchemy
-- SQLite
-- OpenPyXL
-- ETL
-- Data Validation
-- Data Cleansing
-- Data Migration
-- Data Reconciliation
+- SQL data extraction and validation
+- ETL workflows
+- Data integration concepts
+- Data cleansing
+- Data quality checks
+- Data migration
 - Root Cause Analysis
-
-### Data Management Skills
-
-- Data Quality Management
-- Data Integrity
-- Referential Integrity
-- Data Defect Investigation
-- Post-Load Validation
-- Dependency Management
-- Data Issue Reporting
-
-### Reporting Skills
-
-- Excel Dashboard Creation
-- Automated Reporting
-- Data Quality Reporting
-- Validation Reports
+- Debugging
+- Data reconciliation
+- Referential integrity
+- Excel reporting and automation
+- Analytical problem solving
 
 ---
 
@@ -948,8 +1586,13 @@ This project demonstrates skills relevant to Data Management, Data Validation, E
 
 **Saba Sulthana**
 
-GitHub:  
+GitHub:
+
 https://github.com/saba0-data
+
+Project Repository:
+
+https://github.com/saba0-data/financial-data-migration-validation-platform
 
 ---
 
